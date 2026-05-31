@@ -1,0 +1,103 @@
+{
+  "": {
+    "swift-dependencies": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/primary.swiftdeps"
+  },
+  "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/Sources/TouchStrip/Actions/FanAction.swift": {
+    "dependencies": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/FanAction.d",
+    "object": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/FanAction.swift.o",
+    "swiftmodule": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/FanAction~partial.swiftmodule",
+    "swift-dependencies": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/FanAction.swiftdeps",
+    "diagnostics": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/FanAction.dia"
+  },
+  "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/Sources/TouchStrip/Actions/FormattingActions.swift": {
+    "dependencies": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/FormattingActions.d",
+    "object": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/FormattingActions.swift.o",
+    "swiftmodule": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/FormattingActions~partial.swiftmodule",
+    "swift-dependencies": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/FormattingActions.swiftdeps",
+    "diagnostics": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/FormattingActions.dia"
+  },
+  "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/Sources/TouchStrip/Actions/ScreenshotAction.swift": {
+    "dependencies": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/ScreenshotAction.d",
+    "object": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/ScreenshotAction.swift.o",
+    "swiftmodule": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/ScreenshotAction~partial.swiftmodule",
+    "swift-dependencies": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/ScreenshotAction.swiftdeps",
+    "diagnostics": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/ScreenshotAction.dia"
+  },
+  "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/Sources/TouchStrip/AppDelegate.swift": {
+    "dependencies": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/AppDelegate.d",
+    "object": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/AppDelegate.swift.o",
+    "swiftmodule": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/AppDelegate~partial.swiftmodule",
+    "swift-dependencies": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/AppDelegate.swiftdeps",
+    "diagnostics": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/AppDelegate.dia"
+  },
+  "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/Sources/TouchStrip/ButtonRegistry.swift": {
+    "dependencies": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/ButtonRegistry.d",
+    "object": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/ButtonRegistry.swift.o",
+    "swiftmodule": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/ButtonRegistry~partial.swiftmodule",
+    "swift-dependencies": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/ButtonRegistry.swiftdeps",
+    "diagnostics": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/ButtonRegistry.dia"
+  },
+  "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/Sources/TouchStrip/Items/SkipItem.swift": {
+    "dependencies": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/SkipItem.d",
+    "object": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/SkipItem.swift.o",
+    "swiftmodule": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/SkipItem~partial.swiftmodule",
+    "swift-dependencies": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/SkipItem.swiftdeps",
+    "diagnostics": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/SkipItem.dia"
+  },
+  "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/Sources/TouchStrip/Items/TabItem.swift": {
+    "dependencies": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/TabItem.d",
+    "object": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/TabItem.swift.o",
+    "swiftmodule": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/TabItem~partial.swiftmodule",
+    "swift-dependencies": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/TabItem.swiftdeps",
+    "diagnostics": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/TabItem.dia"
+  },
+  "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/Sources/TouchStrip/Items/VolumeItem.swift": {
+    "dependencies": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/VolumeItem.d",
+    "object": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/VolumeItem.swift.o",
+    "swiftmodule": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/VolumeItem~partial.swiftmodule",
+    "swift-dependencies": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/VolumeItem.swiftdeps",
+    "diagnostics": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/VolumeItem.dia"
+  },
+  "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/Sources/TouchStrip/SMCController.swift": {
+    "dependencies": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/SMCController.d",
+    "object": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/SMCController.swift.o",
+    "swiftmodule": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/SMCController~partial.swiftmodule",
+    "swift-dependencies": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/SMCController.swiftdeps",
+    "diagnostics": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/SMCController.dia"
+  },
+  "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/Sources/TouchStrip/TouchBarController.swift": {
+    "dependencies": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/TouchBarController.d",
+    "object": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/TouchBarController.swift.o",
+    "swiftmodule": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/TouchBarController~partial.swiftmodule",
+    "swift-dependencies": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/TouchBarController.swiftdeps",
+    "diagnostics": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/TouchBarController.dia"
+  },
+  "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/Sources/TouchStrip/TouchStripAction.swift": {
+    "dependencies": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/TouchStripAction.d",
+    "object": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/TouchStripAction.swift.o",
+    "swiftmodule": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/TouchStripAction~partial.swiftmodule",
+    "swift-dependencies": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/TouchStripAction.swiftdeps",
+    "diagnostics": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/TouchStripAction.dia"
+  },
+  "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/Sources/TouchStrip/TouchStripButtonItem.swift": {
+    "dependencies": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/TouchStripButtonItem.d",
+    "object": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/TouchStripButtonItem.swift.o",
+    "swiftmodule": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/TouchStripButtonItem~partial.swiftmodule",
+    "swift-dependencies": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/TouchStripButtonItem.swiftdeps",
+    "diagnostics": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/TouchStripButtonItem.dia"
+  },
+  "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/Sources/TouchStrip/Utils.swift": {
+    "dependencies": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/Utils.d",
+    "object": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/Utils.swift.o",
+    "swiftmodule": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/Utils~partial.swiftmodule",
+    "swift-dependencies": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/Utils.swiftdeps",
+    "diagnostics": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/Utils.dia"
+  },
+  "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/Sources/TouchStrip/main.swift": {
+    "dependencies": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/main.d",
+    "object": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/main.swift.o",
+    "swiftmodule": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/main~partial.swiftmodule",
+    "swift-dependencies": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/main.swiftdeps",
+    "diagnostics": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/main.dia"
+  }
+}
