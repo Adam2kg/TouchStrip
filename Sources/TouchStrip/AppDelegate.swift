@@ -28,20 +28,25 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         //   1. Create Actions/MyAction.swift implementing TouchStripAction
         //   2. Add one line below: ButtonRegistry.shared.register(MyAction())
         // ───────────────────────────────────────────────────────────────────
-        ButtonRegistry.shared.register(ScreenshotAction())
+        // Control Strip fills right→left: last registered = rightmost = always visible
+        // B/I/U are lowest priority — they drop off first when space runs out
+        // Control Strip (right side) — last registered = rightmost = never cut off
         ButtonRegistry.shared.register(BoldAction())
         ButtonRegistry.shared.register(ItalicAction())
         ButtonRegistry.shared.register(UnderlineAction())
+        ButtonRegistry.shared.register(ScreenshotAction())
         ButtonRegistry.shared.register(FanAction())
-        ButtonRegistry.shared.register(ClaudeTokenAction())
-        ButtonRegistry.shared.register(ClaudeAcceptAction())
         // ButtonRegistry.shared.register(MuteAction())
         // ButtonRegistry.shared.register(TimerAction())
 
         NSApp.activate(ignoringOtherApps: true)
         ButtonRegistry.shared.installAll()
+
+        // Middle Touch Bar — DFR system-modal presentation (same API Claude Desktop uses)
+        // Shows live token count + Accept button; persists across app switches
+        ClaudeMainBar.shared.install()
+
         tsDebugLog("Setup complete ✓\n")
-        // Note: NSApp.touchBar is no longer set here — ButtonRegistry handles all DFR slots
     }
 
     func applicationWillTerminate(_ notification: Notification) {

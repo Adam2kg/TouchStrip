@@ -34,11 +34,10 @@ struct ClaudeAcceptAction: TouchStripAction {
                   let up  = CGEvent(keyboardEventSource: src, virtualKey: 0x24, keyDown: false)
             else { return }
 
-            dn.flags = .maskCommand
-            up.flags = .maskCommand
+            // Plain Enter — Claude Desktop submits on Enter (Cmd+Enter is not needed)
             dn.postToPid(app.processIdentifier)
             up.postToPid(app.processIdentifier)
-            tsDebugLog("claude-accept: sent ⌘↩ to \(app.bundleIdentifier ?? "?")\n")
+            tsDebugLog("claude-accept: sent ↩ to \(app.bundleIdentifier ?? "?")\n")
         }
     }
 }
