@@ -14,6 +14,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         statusItem.button?.title = "▣"
         let menu = NSMenu()
+        menu.addItem(NSMenuItem(title: "Restore Touch Bar",
+                                action: #selector(restoreBar),
+                                keyEquivalent: "r"))
+        menu.addItem(.separator())
         menu.addItem(NSMenuItem(title: "Quit TouchStrip",
                                 action: #selector(NSApplication.terminate(_:)),
                                 keyEquivalent: "q"))
@@ -57,6 +61,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationShouldTerminateAfterLastWindowClosed(_ app: NSApplication) -> Bool { false }
 
     // MARK: - Helpers
+
+    @objc private func restoreBar() {
+        ClaudeMainBar.shared.install()
+    }
 
     private func acquireLock() -> Bool {
         if let existing = try? String(contentsOfFile: Self.pidFile),
