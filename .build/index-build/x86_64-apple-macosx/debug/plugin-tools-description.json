@@ -24,6 +24,10 @@
       "inputs" : [
         {
           "kind" : "file",
+          "name" : "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/Sources/TouchStrip/Actions/ClaudeActions.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/Sources/TouchStrip/Actions/FanAction.swift"
         },
         {
@@ -91,6 +95,7 @@
       "moduleName" : "TouchStrip",
       "moduleOutputPath" : "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/Modules/TouchStrip.swiftmodule",
       "objects" : [
+        "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/ClaudeActions.swift.o",
         "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/FanAction.swift.o",
         "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/FormattingActions.swift.o",
         "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/ScreenshotAction.swift.o",
@@ -170,6 +175,7 @@
       ],
       "prepareForIndexing" : true,
       "sources" : [
+        "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/Sources/TouchStrip/Actions/ClaudeActions.swift",
         "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/Sources/TouchStrip/Actions/FanAction.swift",
         "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/Sources/TouchStrip/Actions/FormattingActions.swift",
         "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/Sources/TouchStrip/Actions/ScreenshotAction.swift",
@@ -200,6 +206,7 @@
       "-package-name",
       "touchstrip",
       "-c",
+      "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/Sources/TouchStrip/Actions/ClaudeActions.swift",
       "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/Sources/TouchStrip/Actions/FanAction.swift",
       "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/Sources/TouchStrip/Actions/FormattingActions.swift",
       "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/Sources/TouchStrip/Actions/ScreenshotAction.swift",
@@ -296,6 +303,10 @@
         {
           "kind" : "virtual",
           "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/Sources/TouchStrip/Actions/ClaudeActions.swift"
         },
         {
           "kind" : "file",

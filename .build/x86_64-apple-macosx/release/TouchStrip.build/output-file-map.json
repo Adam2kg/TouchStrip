@@ -4,6 +4,12 @@
     "object": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/x86_64-apple-macosx/release/TouchStrip.build/TouchStrip.o",
     "swift-dependencies": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/x86_64-apple-macosx/release/TouchStrip.build/primary.swiftdeps"
   },
+  "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/Sources/TouchStrip/Actions/ClaudeActions.swift": {
+    "object": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/x86_64-apple-macosx/release/TouchStrip.build/ClaudeActions.swift.o",
+    "swiftmodule": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/x86_64-apple-macosx/release/TouchStrip.build/ClaudeActions~partial.swiftmodule",
+    "swift-dependencies": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/x86_64-apple-macosx/release/TouchStrip.build/ClaudeActions.swiftdeps",
+    "diagnostics": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/x86_64-apple-macosx/release/TouchStrip.build/ClaudeActions.dia"
+  },
   "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/Sources/TouchStrip/Actions/FanAction.swift": {
     "object": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/x86_64-apple-macosx/release/TouchStrip.build/FanAction.swift.o",
     "swiftmodule": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/x86_64-apple-macosx/release/TouchStrip.build/FanAction~partial.swiftmodule",

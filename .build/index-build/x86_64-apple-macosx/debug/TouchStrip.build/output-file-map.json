@@ -2,6 +2,13 @@
   "": {
     "swift-dependencies": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/primary.swiftdeps"
   },
+  "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/Sources/TouchStrip/Actions/ClaudeActions.swift": {
+    "dependencies": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/ClaudeActions.d",
+    "object": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/ClaudeActions.swift.o",
+    "swiftmodule": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/ClaudeActions~partial.swiftmodule",
+    "swift-dependencies": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/ClaudeActions.swiftdeps",
+    "diagnostics": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/ClaudeActions.dia"
+  },
   "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/Sources/TouchStrip/Actions/FanAction.swift": {
     "dependencies": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/FanAction.d",
     "object": "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/index-build/x86_64-apple-macosx/debug/TouchStrip.build/FanAction.swift.o",

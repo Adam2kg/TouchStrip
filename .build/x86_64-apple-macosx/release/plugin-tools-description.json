@@ -24,6 +24,10 @@
       "inputs" : [
         {
           "kind" : "file",
+          "name" : "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/Sources/TouchStrip/Actions/ClaudeActions.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/Sources/TouchStrip/Actions/FanAction.swift"
         },
         {
@@ -91,6 +95,7 @@
       "moduleName" : "TouchStrip",
       "moduleOutputPath" : "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/x86_64-apple-macosx/release/Modules/TouchStrip.swiftmodule",
       "objects" : [
+        "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/x86_64-apple-macosx/release/TouchStrip.build/ClaudeActions.swift.o",
         "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/x86_64-apple-macosx/release/TouchStrip.build/FanAction.swift.o",
         "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/x86_64-apple-macosx/release/TouchStrip.build/FormattingActions.swift.o",
         "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/x86_64-apple-macosx/release/TouchStrip.build/ScreenshotAction.swift.o",
@@ -124,7 +129,6 @@
         "-entry-point-function-name",
         "-Xfrontend",
         "TouchStrip_main",
-        "-color-diagnostics",
         "-swift-version",
         "5",
         "-plugin-path",
@@ -155,6 +159,10 @@
       ],
       "outputFileMapPath" : "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/x86_64-apple-macosx/release/TouchStrip.build/output-file-map.json",
       "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/x86_64-apple-macosx/release/TouchStrip.build/ClaudeActions.swift.o"
+        },
         {
           "kind" : "file",
           "name" : "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/x86_64-apple-macosx/release/TouchStrip.build/FanAction.swift.o"
@@ -218,6 +226,7 @@
       ],
       "prepareForIndexing" : false,
       "sources" : [
+        "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/Sources/TouchStrip/Actions/ClaudeActions.swift",
         "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/Sources/TouchStrip/Actions/FanAction.swift",
         "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/Sources/TouchStrip/Actions/FormattingActions.swift",
         "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/Sources/TouchStrip/Actions/ScreenshotAction.swift",
@@ -248,6 +257,7 @@
       "-package-name",
       "touchstrip",
       "-c",
+      "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/Sources/TouchStrip/Actions/ClaudeActions.swift",
       "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/Sources/TouchStrip/Actions/FanAction.swift",
       "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/Sources/TouchStrip/Actions/FormattingActions.swift",
       "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/Sources/TouchStrip/Actions/ScreenshotAction.swift",
@@ -281,7 +291,6 @@
       "-entry-point-function-name",
       "-Xfrontend",
       "TouchStrip_main",
-      "-color-diagnostics",
       "-swift-version",
       "5",
       "-plugin-path",
@@ -336,6 +345,10 @@
         {
           "kind" : "virtual",
           "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/Sources/TouchStrip/Actions/ClaudeActions.swift"
         },
         {
           "kind" : "file",
@@ -410,6 +423,10 @@
         {
           "kind" : "file",
           "name" : "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/x86_64-apple-macosx/release/TouchStrip.build/ButtonRegistry.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/sebastianziegler/claude-octopus/projects/TouchStrip/.build/x86_64-apple-macosx/release/TouchStrip.build/ClaudeActions.swift.o"
         },
         {
           "kind" : "file",

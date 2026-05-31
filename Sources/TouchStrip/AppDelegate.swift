@@ -33,6 +33,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         ButtonRegistry.shared.register(ItalicAction())
         ButtonRegistry.shared.register(UnderlineAction())
         ButtonRegistry.shared.register(FanAction())
+        ButtonRegistry.shared.register(ClaudeTokenAction())
+        ButtonRegistry.shared.register(ClaudeAcceptAction())
         // ButtonRegistry.shared.register(MuteAction())
         // ButtonRegistry.shared.register(TimerAction())
 
