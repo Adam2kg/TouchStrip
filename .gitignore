@@ -1,0 +1,9 @@
+.build/
+*.o
+*.d
+TouchStrip.app/
+/tmp/
+.DS_Store
+*.xcuserstate
+xcuserdata/
+DerivedData/
