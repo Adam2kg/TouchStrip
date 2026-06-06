@@ -23,6 +23,10 @@ protocol TouchStripAction {
     func activate()
 }
 
+protocol LiveTouchStripAction: AnyObject {
+    var buttonUpdater: ((String, NSColor) -> Void)? { get set }
+}
+
 // MARK: - Defaults
 
 extension TouchStripAction {

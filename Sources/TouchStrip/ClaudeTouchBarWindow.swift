@@ -16,7 +16,8 @@ final class ClaudeMainBar: NSObject, NSTouchBarDelegate {
     static let shared = ClaudeMainBar()
 
     private var bar: NSTouchBar?
-    private weak var tokenLabel: NSTextField?
+    private weak var infoLabel: NSTextField?
+    private var dialogMessage: String? = nil
     private var refreshTimer: Timer?
     private var pollTimer: Timer?
     private var sessionStartTokens: Int = 0
@@ -37,11 +38,6 @@ final class ClaudeMainBar: NSObject, NSTouchBarDelegate {
     private static let dfrHandle: UnsafeMutableRawPointer? =
         dlopen("/System/Library/PrivateFrameworks/DFRFoundation.framework/DFRFoundation", RTLD_LAZY)
 
-    private static let colorAllowOnce   = NSColor(red: 0.18, green: 0.65, blue: 0.32, alpha: 1)
-    private static let colorAlwaysAllow = NSColor(red: 0.18, green: 0.45, blue: 0.88, alpha: 1)
-    private static let colorReject      = NSColor(red: 0.85, green: 0.22, blue: 0.22, alpha: 1)
-    private static let colorDim         = NSColor(white: 0.22, alpha: 1)
-
     private static let dialogTitles: Set<String> = ["Allow Once", "Always Allow", "Deny", "Reject"]
 
     // MARK: - Public
@@ -52,11 +48,11 @@ final class ClaudeMainBar: NSObject, NSTouchBarDelegate {
         let b = NSTouchBar()
         b.delegate = self
         b.defaultItemIdentifiers = [
-            .init("claude.tokens"),
+            .init("claude.identity"),
+            .init("claude.info"),
             .init("claude.allow_once"),
             .init("claude.always_allow"),
             .init("claude.reject"),
-            .flexibleSpace,
         ]
         bar = b
         present(b)
@@ -94,95 +90,118 @@ final class ClaudeMainBar: NSObject, NSTouchBarDelegate {
     func touchBar(_ touchBar: NSTouchBar,
                   makeItemForIdentifier id: NSTouchBarItem.Identifier) -> NSTouchBarItem? {
         switch id.rawValue {
-        case "claude.tokens":
+        case "claude.identity":
             let item  = NSCustomTouchBarItem(identifier: id)
-            let (text, color) = currentTokenDisplay()
-            let label = NSTextField(labelWithString: text)
-            label.font            = .monospacedDigitSystemFont(ofSize: 13, weight: .medium)
-            label.textColor       = color
+            let stack = NSStackView()
+            stack.orientation = .horizontal
+            stack.spacing = 5
+            let icon = NSImageView(image: anthropicIcon())
+            icon.translatesAutoresizingMaskIntoConstraints = false
+            icon.widthAnchor.constraint(equalToConstant: 16).isActive = true
+            icon.heightAnchor.constraint(equalToConstant: 16).isActive = true
+            let label = NSTextField(labelWithString: "Claude")
+            label.font      = .systemFont(ofSize: 13, weight: .semibold)
+            label.textColor = .white
+            stack.addArrangedSubview(icon)
+            stack.addArrangedSubview(label)
+            item.view = stack
+            return item
+
+        case "claude.info":
+            let item  = NSCustomTouchBarItem(identifier: id)
+            let label = NSTextField(labelWithString: infoText())
+            label.font            = .systemFont(ofSize: 12, weight: .regular)
+            label.textColor       = .white
             label.isBezeled       = false
             label.drawsBackground = false
             label.translatesAutoresizingMaskIntoConstraints = false
-            label.widthAnchor.constraint(equalToConstant: 96).isActive = true
-            tokenLabel = label
+            label.widthAnchor.constraint(greaterThanOrEqualToConstant: 80).isActive = true
+            infoLabel = label
             item.view  = label
             return item
 
         case "claude.allow_once":
             let item = NSCustomTouchBarItem(identifier: id)
-            let btn  = makePermButton(title: "Allow Once",  color: Self.colorAllowOnce,
-                                      action: #selector(allowOnceTapped))
+            let btn  = makePermButton(title: "Allow Once",   action: #selector(allowOnceTapped))
             permButtons.append(btn); item.view = btn; return item
 
         case "claude.always_allow":
             let item = NSCustomTouchBarItem(identifier: id)
-            let btn  = makePermButton(title: "Always Allow", color: Self.colorAlwaysAllow,
-                                      action: #selector(alwaysAllowTapped))
+            let btn  = makePermButton(title: "Always Allow", action: #selector(alwaysAllowTapped))
             permButtons.append(btn); item.view = btn; return item
 
         case "claude.reject":
             let item = NSCustomTouchBarItem(identifier: id)
-            let btn  = makePermButton(title: "Reject",      color: Self.colorReject,
-                                      action: #selector(rejectTapped))
+            let btn  = makePermButton(title: "Reject",       action: #selector(rejectTapped))
             permButtons.append(btn); item.view = btn; return item
 
         default: return nil
         }
     }
 
-    private func makePermButton(title: String, color: NSColor, action: Selector) -> NSButton {
+    private func makePermButton(title: String, action: Selector) -> NSButton {
         let btn = NSButton(title: title, target: self, action: action)
-        btn.bezelColor = Self.colorDim
+        btn.bezelStyle = .rounded
+        btn.font       = .systemFont(ofSize: 13, weight: .regular)
         btn.isEnabled  = false
         btn.translatesAutoresizingMaskIntoConstraints = false
-        btn.widthAnchor.constraint(equalToConstant: 140).isActive = true
+        btn.widthAnchor.constraint(equalToConstant: 110).isActive = true
         return btn
+    }
+
+    private func anthropicIcon() -> NSImage {
+        NSImage(size: NSSize(width: 16, height: 16), flipped: false) { rect in
+            let cx = rect.midX, cy = rect.midY
+            NSColor(red: 0.91, green: 0.38, blue: 0.17, alpha: 1).setFill()
+            let path = NSBezierPath()
+            for i in 0..<8 {
+                let angle = Double(i) * .pi / 4
+                let cos = CGFloat(Foundation.cos(angle))
+                let sin = CGFloat(Foundation.sin(angle))
+                let perp = CGFloat(Foundation.cos(angle + .pi / 2))
+                let psin = CGFloat(Foundation.sin(angle + .pi / 2))
+                let inner: CGFloat = 2.5, outer: CGFloat = 7.5, w: CGFloat = 1.6
+                path.move(to:  CGPoint(x: cx + inner*cos - w*perp, y: cy + inner*sin - w*psin))
+                path.line(to:  CGPoint(x: cx + outer*cos,          y: cy + outer*sin))
+                path.line(to:  CGPoint(x: cx + inner*cos + w*perp, y: cy + inner*sin + w*psin))
+                path.close()
+            }
+            path.fill()
+            return true
+        }
+    }
+
+    private func infoText() -> String {
+        if let msg = dialogMessage { return msg }
+        guard let count = readRawTokenCount() else { return "—" }
+        let session = max(0, count - sessionStartTokens)
+        func fmt(_ n: Int) -> String { n >= 1_000 ? String(format: "%.0fk", Double(n) / 1_000) : "\(n)" }
+        return "\(fmt(count))/\(fmt(session))"
     }
 
     // MARK: - Actions
 
-    @objc private func allowOnceTapped()   { sendClick(xFrac: 0.25, label: "Allow Once") }
-    @objc private func alwaysAllowTapped() { sendClick(xFrac: 0.55, label: "Always Allow") }
-    @objc private func rejectTapped()      { sendClick(xFrac: 0.82, label: "Reject") }
+    @objc private func allowOnceTapped()   { sendKey(0x24, flags: .maskCommand,                  label: "Allow Once") }
+    @objc private func alwaysAllowTapped() { sendKey(0x24, flags: [.maskCommand, .maskShift],    label: "Always Allow") }
+    @objc private func rejectTapped()      { sendKey(0x35, flags: [],                             label: "Reject") }
 
-    private func sendClick(xFrac: CGFloat, label: String) {
+    private func sendKey(_ key: CGKeyCode, flags: CGEventFlags, label: String) {
         guard let claude = runningClaude() else {
             tsDebugLog("claude-bar: \(label) — Claude not running\n"); return
         }
         let pid = claude.processIdentifier
         claude.activate(options: .activateIgnoringOtherApps)
-        guard let win = mainWindow(pid: pid) else {
-            tsDebugLog("claude-bar: \(label) — no main window\n"); return
-        }
-        let pt = CGPoint(x: win.origin.x + win.width * xFrac,
-                         y: win.origin.y + win.height * 0.65)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.08) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             guard let src = CGEventSource(stateID: .hidSystemState),
-                  let dn  = CGEvent(mouseEventSource: src, mouseType: .leftMouseDown,
-                                    mouseCursorPosition: pt, mouseButton: .left),
-                  let up  = CGEvent(mouseEventSource: src, mouseType: .leftMouseUp,
-                                    mouseCursorPosition: pt, mouseButton: .left)
+                  let dn  = CGEvent(keyboardEventSource: src, virtualKey: key, keyDown: true),
+                  let up  = CGEvent(keyboardEventSource: src, virtualKey: key, keyDown: false)
             else { return }
-            dn.postToPid(pid); up.postToPid(pid)
-            tsDebugLog("claude-bar: clicked \(label) at (\(Int(pt.x)),\(Int(pt.y))) win=\(win)\n")
+            dn.flags = flags
+            up.flags = flags
+            dn.postToPid(pid)
+            up.postToPid(pid)
+            tsDebugLog("claude-bar: sent \(label) key=\(key) flags=\(flags.rawValue)\n")
         }
-    }
-
-    private func mainWindow(pid: pid_t) -> CGRect? {
-        guard let list = CGWindowListCopyWindowInfo([.optionOnScreenOnly, .excludeDesktopElements],
-                                                    kCGNullWindowID) as? [[String: Any]]
-        else { return nil }
-        for win in list {
-            guard win[kCGWindowOwnerPID as String] as? pid_t == pid,
-                  (win[kCGWindowLayer as String] as? Int) == 0,
-                  let b = win[kCGWindowBounds as String] as? [String: Any],
-                  let x = b["X"] as? CGFloat, let y = b["Y"] as? CGFloat,
-                  let w = b["Width"] as? CGFloat, let h = b["Height"] as? CGFloat,
-                  w > 200, h > 200
-            else { continue }
-            return CGRect(x: x, y: y, width: w, height: h)
-        }
-        return nil
     }
 
     // MARK: - Tier 1: AX polling
@@ -196,29 +215,38 @@ final class ClaudeMainBar: NSObject, NSTouchBarDelegate {
 
     private func axPollTick() {
         guard let claude = runningClaude() else {
-            if axDialogVisible { axDialogVisible = false; applyButtonState() }
+            if axDialogVisible { axDialogVisible = false; dialogMessage = nil; applyButtonState() }
             return
         }
-        let found = axHasDialogButtons(pid: claude.processIdentifier)
-        if found != axDialogVisible {
+        let (found, msg) = axDialogInfo(pid: claude.processIdentifier)
+        if found != axDialogVisible || msg != dialogMessage {
             axDialogVisible = found
+            dialogMessage   = found ? msg : nil
             applyButtonState()
-            tsDebugLog("claude-bar: AX dialog \(found ? "detected ▶" : "gone ◀")\n")
+            tsDebugLog("claude-bar: AX dialog \(found ? "detected ▶ \(msg ?? "")" : "gone ◀")\n")
         }
     }
 
-    private func axHasDialogButtons(pid: pid_t) -> Bool {
+    private func axDialogInfo(pid: pid_t) -> (detected: Bool, message: String?) {
         let app = AXUIElementCreateApplication(pid)
         var queue: [(AXUIElement, Int)] = [(app, 0)]
+        var foundButton = false
+        var message: String? = nil
         while !queue.isEmpty {
             let (el, depth) = queue.removeFirst()
             guard depth < 8 else { continue }
             var role: CFTypeRef?
             AXUIElementCopyAttributeValue(el, kAXRoleAttribute as CFString, &role)
-            if role as? String == kAXButtonRole as String {
+            let roleStr = role as? String ?? ""
+            if roleStr == kAXButtonRole as String {
                 var title: CFTypeRef?
                 AXUIElementCopyAttributeValue(el, kAXTitleAttribute as CFString, &title)
-                if let t = title as? String, Self.dialogTitles.contains(t) { return true }
+                if let t = title as? String, Self.dialogTitles.contains(t) { foundButton = true }
+            }
+            if roleStr == kAXStaticTextRole as String, message == nil {
+                var val: CFTypeRef?
+                AXUIElementCopyAttributeValue(el, kAXValueAttribute as CFString, &val)
+                if let t = val as? String, t.lowercased().contains("claude") { message = t }
             }
             var children: CFTypeRef?
             if AXUIElementCopyAttributeValue(el, kAXChildrenAttribute as CFString, &children) == .success,
@@ -226,7 +254,7 @@ final class ClaudeMainBar: NSObject, NSTouchBarDelegate {
                 kids.forEach { queue.append(($0, depth + 1)) }
             }
         }
-        return false
+        return (foundButton, foundButton ? message : nil)
     }
 
     // MARK: - Tier 2: front-app observer
@@ -246,6 +274,7 @@ final class ClaudeMainBar: NSObject, NSTouchBarDelegate {
         let was = claudeIsFront
         claudeIsFront = (app.bundleIdentifier == Self.claudeBundle)
         if claudeIsFront != was {
+            dialogMessage = claudeIsFront ? "Claude wants your permission" : nil
             applyButtonState()
             tsDebugLog("claude-bar: front=\(app.localizedName ?? "?") → buttons \(claudeIsFront ? "active" : "dim")\n")
         }
@@ -256,13 +285,10 @@ final class ClaudeMainBar: NSObject, NSTouchBarDelegate {
     /// Single place that decides active/dim based on whichever tier is running.
     private func applyButtonState() {
         let active = AXIsProcessTrusted() ? axDialogVisible : claudeIsFront
-        let colors: [NSColor] = [Self.colorAllowOnce, Self.colorAlwaysAllow, Self.colorReject]
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }
-            for (i, btn) in self.permButtons.enumerated() {
-                btn.bezelColor = active ? colors[i] : Self.colorDim
-                btn.isEnabled  = active
-            }
+            self.permButtons.forEach { $0.isEnabled = active }
+            self.infoLabel?.stringValue = self.infoText()
         }
     }
 
@@ -271,33 +297,11 @@ final class ClaudeMainBar: NSObject, NSTouchBarDelegate {
     private func startRefreshTimer() {
         refreshTimer?.invalidate()
         refreshTimer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { [weak self] _ in
-            guard let self else { return }
-            let (text, color) = self.currentTokenDisplay()
+            guard let self, self.dialogMessage == nil else { return }
             DispatchQueue.main.async {
-                self.tokenLabel?.stringValue = text
-                self.tokenLabel?.textColor   = color
+                self.infoLabel?.stringValue = self.infoText()
             }
         }
-    }
-
-    private func currentTokenDisplay() -> (String, NSColor) {
-        guard let count = readRawTokenCount()
-        else { return ("—", NSColor(white: 0.5, alpha: 1)) }
-        let session = max(0, count - sessionStartTokens)
-        func fmt(_ n: Int) -> String { n >= 1_000 ? String(format: "%.0fk", Double(n)/1_000) : "\(n)" }
-        let text  = "\(fmt(count))/\(fmt(session))"
-        let color: NSColor
-        switch count {
-        case ..<50_000:  color = NSColor(red: 0.55, green: 0.90, blue: 0.55, alpha: 1)
-        case ..<120_000: color = NSColor(red: 1.00, green: 0.85, blue: 0.20, alpha: 1)
-        case ..<170_000: color = NSColor(red: 1.00, green: 0.55, blue: 0.10, alpha: 1)
-        default:         color = NSColor(red: 1.00, green: 0.28, blue: 0.28, alpha: 1)
-        }
-        if text != lastLoggedTokenText {
-            tsDebugLog("claude-bar: tokens today=\(count) session=\(session) → \(text)\n")
-            lastLoggedTokenText = text
-        }
-        return (text, color)
     }
 
     private func readRawTokenCount() -> Int? {

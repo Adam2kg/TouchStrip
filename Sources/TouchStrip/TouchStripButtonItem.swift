@@ -20,6 +20,14 @@ class TouchStripButtonItem: NSCustomTouchBarItem {
             button.heightAnchor.constraint(equalToConstant: 30),
         ])
         view = button
+        if let live = action as? LiveTouchStripAction {
+            live.buttonUpdater = { [weak self] title, color in
+                DispatchQueue.main.async {
+                    self?.button.title = title
+                    self?.button.contentTintColor = color
+                }
+            }
+        }
     }
 
     required init?(coder: NSCoder) { fatalError() }
