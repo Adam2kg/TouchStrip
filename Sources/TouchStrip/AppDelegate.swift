@@ -47,7 +47,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         ButtonRegistry.shared.installAll()
 
         // Middle Touch Bar — DFR system-modal presentation (same API Claude Desktop uses)
-        // Shows live token count + Accept button; persists across app switches
+        // Shows Claude token count + Allow Once / Always Allow / Reject; persists across app switches
         ClaudeMainBar.shared.install()
 
         tsDebugLog("Setup complete ✓\n")

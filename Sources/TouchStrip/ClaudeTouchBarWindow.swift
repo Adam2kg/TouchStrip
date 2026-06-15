@@ -1,32 +1,21 @@
 import AppKit
-import ApplicationServices
 
-/// Middle Touch Bar — token counter + 3 permission buttons.
+/// Middle Touch Bar — Claude identity + token counter + 3 permission buttons.
 ///
-/// Detection is two-tier:
-///   • Tier 1 (preferred): AX polling every 1 s searches Claude's accessibility tree
-///     for "Allow Once" / "Always Allow" / "Deny" button elements. Requires TouchStrip
-///     to be listed in System Settings → Privacy & Security → Accessibility.
-///   • Tier 2 (fallback): NSWorkspace front-app observer. Buttons light up whenever
-///     Claude Desktop is the frontmost application. Works with no extra permissions.
-///
-/// The tier in use is logged at startup: "AX detection active" or "front-app fallback".
+/// Buttons send keystrokes to Claude Desktop (⌘↩ Allow Once, ⌘⇧↩ Always Allow,
+/// ⎋ Reject) and light up while Claude Desktop is frontmost. Precise per-dialog
+/// detection was removed: it required Accessibility tree access that Claude's
+/// Electron shell does not expose, so the front-app heuristic is the reliable signal.
 final class ClaudeMainBar: NSObject, NSTouchBarDelegate {
 
     static let shared = ClaudeMainBar()
 
     private var bar: NSTouchBar?
     private weak var infoLabel: NSTextField?
-    private var dialogMessage: String? = nil
+    private var dialogMessage: String?
     private var refreshTimer: Timer?
-    private var pollTimer: Timer?
     private var sessionStartTokens: Int = 0
-    private var lastLoggedTokenText: String = ""
     private var permButtons: [NSButton] = []
-
-    // AX tier state
-    private var axDialogVisible = false
-    // Front-app tier state
     private var claudeIsFront = false
 
     private static let tokenFile =
@@ -37,8 +26,6 @@ final class ClaudeMainBar: NSObject, NSTouchBarDelegate {
     private typealias DFRShowsCloseBoxFn = @convention(c) (Bool) -> Void
     private static let dfrHandle: UnsafeMutableRawPointer? =
         dlopen("/System/Library/PrivateFrameworks/DFRFoundation.framework/DFRFoundation", RTLD_LAZY)
-
-    private static let dialogTitles: Set<String> = ["Allow Once", "Always Allow", "Deny", "Reject"]
 
     // MARK: - Public
 
@@ -57,15 +44,7 @@ final class ClaudeMainBar: NSObject, NSTouchBarDelegate {
         bar = b
         present(b)
         startRefreshTimer()
-
-        if AXIsProcessTrusted() {
-            tsDebugLog("claude-bar: AX detection active\n")
-            startAXPoll()
-        } else {
-            tsDebugLog("claude-bar: front-app fallback (grant Accessibility in System Settings for precise detection)\n")
-            startFrontAppObserver()
-        }
-
+        startFrontAppObserver()
         tsDebugLog("ClaudeMainBar: installed (baseline \(sessionStartTokens))\n")
     }
 
@@ -96,7 +75,6 @@ final class ClaudeMainBar: NSObject, NSTouchBarDelegate {
             stack.orientation = .horizontal
             stack.spacing = 5
             let icon = NSImageView(image: anthropicIcon())
-            icon.translatesAutoresizingMaskIntoConstraints = false
             icon.widthAnchor.constraint(equalToConstant: 16).isActive = true
             icon.heightAnchor.constraint(equalToConstant: 16).isActive = true
             let label = NSTextField(labelWithString: "Claude")
@@ -156,14 +134,12 @@ final class ClaudeMainBar: NSObject, NSTouchBarDelegate {
             let path = NSBezierPath()
             for i in 0..<8 {
                 let angle = Double(i) * .pi / 4
-                let cos = CGFloat(Foundation.cos(angle))
-                let sin = CGFloat(Foundation.sin(angle))
-                let perp = CGFloat(Foundation.cos(angle + .pi / 2))
-                let psin = CGFloat(Foundation.sin(angle + .pi / 2))
+                let cos = CGFloat(Foundation.cos(angle)), sin = CGFloat(Foundation.sin(angle))
+                let perp = CGFloat(Foundation.cos(angle + .pi / 2)), psin = CGFloat(Foundation.sin(angle + .pi / 2))
                 let inner: CGFloat = 2.5, outer: CGFloat = 7.5, w: CGFloat = 1.6
-                path.move(to:  CGPoint(x: cx + inner*cos - w*perp, y: cy + inner*sin - w*psin))
-                path.line(to:  CGPoint(x: cx + outer*cos,          y: cy + outer*sin))
-                path.line(to:  CGPoint(x: cx + inner*cos + w*perp, y: cy + inner*sin + w*psin))
+                path.move(to: CGPoint(x: cx + inner*cos - w*perp, y: cy + inner*sin - w*psin))
+                path.line(to: CGPoint(x: cx + outer*cos,          y: cy + outer*sin))
+                path.line(to: CGPoint(x: cx + inner*cos + w*perp, y: cy + inner*sin + w*psin))
                 path.close()
             }
             path.fill()
@@ -181,9 +157,9 @@ final class ClaudeMainBar: NSObject, NSTouchBarDelegate {
 
     // MARK: - Actions
 
-    @objc private func allowOnceTapped()   { sendKey(0x24, flags: .maskCommand,                  label: "Allow Once") }
-    @objc private func alwaysAllowTapped() { sendKey(0x24, flags: [.maskCommand, .maskShift],    label: "Always Allow") }
-    @objc private func rejectTapped()      { sendKey(0x35, flags: [],                             label: "Reject") }
+    @objc private func allowOnceTapped()   { sendKey(0x24, flags: .maskCommand,               label: "Allow Once") }
+    @objc private func alwaysAllowTapped() { sendKey(0x24, flags: [.maskCommand, .maskShift],  label: "Always Allow") }
+    @objc private func rejectTapped()      { sendKey(0x35, flags: [],                          label: "Reject") }
 
     private func sendKey(_ key: CGKeyCode, flags: CGEventFlags, label: String) {
         guard let claude = runningClaude() else {
@@ -196,74 +172,18 @@ final class ClaudeMainBar: NSObject, NSTouchBarDelegate {
                   let dn  = CGEvent(keyboardEventSource: src, virtualKey: key, keyDown: true),
                   let up  = CGEvent(keyboardEventSource: src, virtualKey: key, keyDown: false)
             else { return }
-            dn.flags = flags
-            up.flags = flags
-            dn.postToPid(pid)
-            up.postToPid(pid)
+            dn.flags = flags; up.flags = flags
+            dn.postToPid(pid); up.postToPid(pid)
             tsDebugLog("claude-bar: sent \(label) key=\(key) flags=\(flags.rawValue)\n")
         }
     }
 
-    // MARK: - Tier 1: AX polling
-
-    private func startAXPoll() {
-        pollTimer?.invalidate()
-        pollTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
-            self?.axPollTick()
-        }
-    }
-
-    private func axPollTick() {
-        guard let claude = runningClaude() else {
-            if axDialogVisible { axDialogVisible = false; dialogMessage = nil; applyButtonState() }
-            return
-        }
-        let (found, msg) = axDialogInfo(pid: claude.processIdentifier)
-        if found != axDialogVisible || msg != dialogMessage {
-            axDialogVisible = found
-            dialogMessage   = found ? msg : nil
-            applyButtonState()
-            tsDebugLog("claude-bar: AX dialog \(found ? "detected ▶ \(msg ?? "")" : "gone ◀")\n")
-        }
-    }
-
-    private func axDialogInfo(pid: pid_t) -> (detected: Bool, message: String?) {
-        let app = AXUIElementCreateApplication(pid)
-        var queue: [(AXUIElement, Int)] = [(app, 0)]
-        var foundButton = false
-        var message: String? = nil
-        while !queue.isEmpty {
-            let (el, depth) = queue.removeFirst()
-            guard depth < 8 else { continue }
-            var role: CFTypeRef?
-            AXUIElementCopyAttributeValue(el, kAXRoleAttribute as CFString, &role)
-            let roleStr = role as? String ?? ""
-            if roleStr == kAXButtonRole as String {
-                var title: CFTypeRef?
-                AXUIElementCopyAttributeValue(el, kAXTitleAttribute as CFString, &title)
-                if let t = title as? String, Self.dialogTitles.contains(t) { foundButton = true }
-            }
-            if roleStr == kAXStaticTextRole as String, message == nil {
-                var val: CFTypeRef?
-                AXUIElementCopyAttributeValue(el, kAXValueAttribute as CFString, &val)
-                if let t = val as? String, t.lowercased().contains("claude") { message = t }
-            }
-            var children: CFTypeRef?
-            if AXUIElementCopyAttributeValue(el, kAXChildrenAttribute as CFString, &children) == .success,
-               let kids = children as? [AXUIElement] {
-                kids.forEach { queue.append(($0, depth + 1)) }
-            }
-        }
-        return (foundButton, foundButton ? message : nil)
-    }
-
-    // MARK: - Tier 2: front-app observer
+    // MARK: - Detection (front-app heuristic)
 
     private func startFrontAppObserver() {
-        let nc = NSWorkspace.shared.notificationCenter
-        nc.addObserver(self, selector: #selector(frontAppChanged(_:)),
-                       name: NSWorkspace.didActivateApplicationNotification, object: nil)
-        // Set initial state from current frontmost app
+        NSWorkspace.shared.notificationCenter.addObserver(
+            self, selector: #selector(frontAppChanged(_:)),
+            name: NSWorkspace.didActivateApplicationNotification, object: nil)
         claudeIsFront = (NSWorkspace.shared.frontmostApplication?.bundleIdentifier == Self.claudeBundle)
         applyButtonState()
     }
@@ -280,14 +200,10 @@ final class ClaudeMainBar: NSObject, NSTouchBarDelegate {
         }
     }
 
-    // MARK: - Button state
-
-    /// Single place that decides active/dim based on whichever tier is running.
     private func applyButtonState() {
-        let active = AXIsProcessTrusted() ? axDialogVisible : claudeIsFront
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }
-            self.permButtons.forEach { $0.isEnabled = active }
+            self.permButtons.forEach { $0.isEnabled = self.claudeIsFront }
             self.infoLabel?.stringValue = self.infoText()
         }
     }
@@ -298,9 +214,7 @@ final class ClaudeMainBar: NSObject, NSTouchBarDelegate {
         refreshTimer?.invalidate()
         refreshTimer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { [weak self] _ in
             guard let self, self.dialogMessage == nil else { return }
-            DispatchQueue.main.async {
-                self.infoLabel?.stringValue = self.infoText()
-            }
+            DispatchQueue.main.async { self.infoLabel?.stringValue = self.infoText() }
         }
     }
 
