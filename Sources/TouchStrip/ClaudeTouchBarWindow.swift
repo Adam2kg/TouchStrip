@@ -1,4 +1,5 @@
 import AppKit
+import ApplicationServices
 
 /// Middle Touch Bar — Claude identity + token counter + 3 permission buttons.
 ///
@@ -45,6 +46,7 @@ final class ClaudeMainBar: NSObject, NSTouchBarDelegate {
         present(b)
         startRefreshTimer()
         startFrontAppObserver()
+        tsDebugLog("ClaudeMainBar: AXIsProcessTrusted=\(AXIsProcessTrusted())  (synthetic keystrokes to other apps require this)\n")
         tsDebugLog("ClaudeMainBar: installed (baseline \(sessionStartTokens))\n")
     }
 
@@ -173,8 +175,12 @@ final class ClaudeMainBar: NSObject, NSTouchBarDelegate {
                   let up  = CGEvent(keyboardEventSource: src, virtualKey: key, keyDown: false)
             else { return }
             dn.flags = flags; up.flags = flags
-            dn.postToPid(pid); up.postToPid(pid)
-            tsDebugLog("claude-bar: sent \(label) key=\(key) flags=\(flags.rawValue)\n")
+            // Global HID post (not postToPid): Claude is Electron/multiprocess, so an
+            // event aimed at the main PID never reaches the renderer that owns the
+            // focused dialog. A HID-level post routes through the normal input pipeline
+            // to whatever is frontmost — which is Claude, since we just activated it.
+            dn.post(tap: .cghidEventTap); up.post(tap: .cghidEventTap)
+            tsDebugLog("claude-bar: sent \(label) key=\(key) flags=\(flags.rawValue) (pid \(pid) frontmost)\n")
         }
     }
 
