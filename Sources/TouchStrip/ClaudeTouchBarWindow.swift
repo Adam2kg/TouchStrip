@@ -159,28 +159,43 @@ final class ClaudeMainBar: NSObject, NSTouchBarDelegate {
 
     // MARK: - Actions
 
-    @objc private func allowOnceTapped()   { sendKey(0x24, flags: .maskCommand,               label: "Allow Once") }
-    @objc private func alwaysAllowTapped() { sendKey(0x24, flags: [.maskCommand, .maskShift],  label: "Always Allow") }
-    @objc private func rejectTapped()      { sendKey(0x35, flags: [],                          label: "Reject") }
+    // Claude Desktop's tool-permission dialog is a WebView of standard focusable HTML
+    // buttons (verified in app.asar — no native button-array, no global key handler).
+    // Enter/Space activates whatever button has FOCUS, and focus defaults to "Allow once".
+    // So the other two buttons can only be triggered by moving focus there first.
+    //   Allow once  : ⌘↩ on the default-focused button            (key 0x24 Return)
+    //   Always allow: Tab → Space  (focus the 2nd button, activate) (0x30 Tab, 0x31 Space)
+    //   Reject      : Tab Tab → Space (focus the 3rd button)
+    // Space (0x31), not Return: Space always fires the focused button regardless of
+    // whether "Allow once" is the form's default submit button.
+    private typealias Stroke = (key: CGKeyCode, flags: CGEventFlags)
 
-    private func sendKey(_ key: CGKeyCode, flags: CGEventFlags, label: String) {
+    @objc private func allowOnceTapped()   { sendKeys([(0x24, .maskCommand)],                   label: "Allow Once") }
+    @objc private func alwaysAllowTapped() { sendKeys([(0x30, []), (0x31, [])],                 label: "Always Allow") }
+    @objc private func rejectTapped()      { sendKeys([(0x30, []), (0x30, []), (0x31, [])],     label: "Reject") }
+
+    private func sendKeys(_ strokes: [Stroke], label: String) {
         guard let claude = runningClaude() else {
             tsDebugLog("claude-bar: \(label) — Claude not running\n"); return
         }
-        let pid = claude.processIdentifier
         claude.activate(options: .activateIgnoringOtherApps)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            guard let src = CGEventSource(stateID: .hidSystemState),
-                  let dn  = CGEvent(keyboardEventSource: src, virtualKey: key, keyDown: true),
-                  let up  = CGEvent(keyboardEventSource: src, virtualKey: key, keyDown: false)
-            else { return }
-            dn.flags = flags; up.flags = flags
-            // Global HID post (not postToPid): Claude is Electron/multiprocess, so an
-            // event aimed at the main PID never reaches the renderer that owns the
-            // focused dialog. A HID-level post routes through the normal input pipeline
-            // to whatever is frontmost — which is Claude, since we just activated it.
-            dn.post(tap: .cghidEventTap); up.post(tap: .cghidEventTap)
-            tsDebugLog("claude-bar: sent \(label) key=\(key) flags=\(flags.rawValue) (pid \(pid) frontmost)\n")
+        // Wait for Claude to be frontmost, then play the strokes in order with a small
+        // gap so the WebView processes each (focus move, then activation).
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) {
+            guard let src = CGEventSource(stateID: .hidSystemState) else { return }
+            for (i, stroke) in strokes.enumerated() {
+                DispatchQueue.main.asyncAfter(deadline: .now() + Double(i) * 0.05) {
+                    guard let dn = CGEvent(keyboardEventSource: src, virtualKey: stroke.key, keyDown: true),
+                          let up = CGEvent(keyboardEventSource: src, virtualKey: stroke.key, keyDown: false)
+                    else { return }
+                    dn.flags = stroke.flags; up.flags = stroke.flags
+                    // Global HID post (not postToPid): Electron's renderer owns the focused
+                    // dialog; a HID-level post routes through the normal input pipeline to
+                    // the frontmost app (Claude, just activated).
+                    dn.post(tap: .cghidEventTap); up.post(tap: .cghidEventTap)
+                }
+            }
+            tsDebugLog("claude-bar: sent \(label) (\(strokes.count)-stroke sequence)\n")
         }
     }
 
