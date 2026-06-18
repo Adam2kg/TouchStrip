@@ -1,19 +1,20 @@
 import AppKit
 import ApplicationServices
 
-/// Middle Touch Bar — Claude identity + token counter + 3 permission buttons.
+/// Middle Touch Bar — Claude identity + live session token usage + action buttons.
 ///
-/// Buttons send keystrokes to Claude Desktop (⌘↩ Allow Once, ⌘⇧↩ Always Allow,
-/// ⎋ Reject) and light up while Claude Desktop is frontmost. Precise per-dialog
-/// detection was removed: it required Accessibility tree access that Claude's
-/// Electron shell does not expose, so the front-app heuristic is the reliable signal.
+/// Buttons send keystrokes to Claude Desktop and light up while Claude Desktop is
+/// frontmost: Allow Once (⌘↩), Always Allow (Tab→Space), Reject (Tab Tab→Space),
+/// Recents (⌘K, opens Claude's chat-search palette) and ↓ (Down arrow) to step
+/// through it. Precise per-dialog detection
+/// was removed: it required Accessibility tree access that Claude's Electron shell
+/// does not expose, so the front-app heuristic is the reliable signal.
 final class ClaudeMainBar: NSObject, NSTouchBarDelegate {
 
     static let shared = ClaudeMainBar()
 
     private var bar: NSTouchBar?
     private weak var infoLabel: NSTextField?
-    private var dialogMessage: String?
     private var refreshTimer: Timer?
     private var sessionStartTokens: Int = 0
     private var permButtons: [NSButton] = []
@@ -39,6 +40,8 @@ final class ClaudeMainBar: NSObject, NSTouchBarDelegate {
             .init("claude.identity"),
             .init("claude.info"),
             .init("claude.allow_once"),
+            .init("claude.recents"),
+            .init("claude.nav_down"),
             .init("claude.always_allow"),
             .init("claude.reject"),
         ]
@@ -115,17 +118,27 @@ final class ClaudeMainBar: NSObject, NSTouchBarDelegate {
             let btn  = makePermButton(title: "Reject",       action: #selector(rejectTapped))
             permButtons.append(btn); item.view = btn; return item
 
+        case "claude.recents":
+            let item = NSCustomTouchBarItem(identifier: id)
+            let btn  = makePermButton(title: "Recents", action: #selector(recentsTapped), width: 90)
+            permButtons.append(btn); item.view = btn; return item
+
+        case "claude.nav_down":
+            let item = NSCustomTouchBarItem(identifier: id)
+            let btn  = makePermButton(title: "↓", action: #selector(navDownTapped), width: 60)
+            permButtons.append(btn); item.view = btn; return item
+
         default: return nil
         }
     }
 
-    private func makePermButton(title: String, action: Selector) -> NSButton {
+    private func makePermButton(title: String, action: Selector, width: CGFloat = 110) -> NSButton {
         let btn = NSButton(title: title, target: self, action: action)
         btn.bezelStyle = .rounded
         btn.font       = .systemFont(ofSize: 13, weight: .regular)
         btn.isEnabled  = false
         btn.translatesAutoresizingMaskIntoConstraints = false
-        btn.widthAnchor.constraint(equalToConstant: 110).isActive = true
+        btn.widthAnchor.constraint(equalToConstant: width).isActive = true
         return btn
     }
 
@@ -150,7 +163,6 @@ final class ClaudeMainBar: NSObject, NSTouchBarDelegate {
     }
 
     private func infoText() -> String {
-        if let msg = dialogMessage { return msg }
         guard let count = readRawTokenCount() else { return "—" }
         let session = max(0, count - sessionStartTokens)
         func fmt(_ n: Int) -> String { n >= 1_000 ? String(format: "%.0fk", Double(n) / 1_000) : "\(n)" }
@@ -173,6 +185,11 @@ final class ClaudeMainBar: NSObject, NSTouchBarDelegate {
     @objc private func allowOnceTapped()   { sendKeys([(0x24, .maskCommand)],                   label: "Allow Once") }
     @objc private func alwaysAllowTapped() { sendKeys([(0x30, []), (0x31, [])],                 label: "Always Allow") }
     @objc private func rejectTapped()      { sendKeys([(0x30, []), (0x30, []), (0x31, [])],     label: "Reject") }
+    // Recents = ⌘K (key 0x28) opens Claude's chat-search palette, which grabs keyboard focus
+    // so the ↓ button can step through recent sessions. A bare ↓ alone just scrolls the chat.
+    @objc private func recentsTapped()     { sendKeys([(0x28, .maskCommand)],                   label: "Recents (⌘K)") }
+    // Down arrow (0x7D), no modifiers — steps through the focused Recents palette / a menu.
+    @objc private func navDownTapped()     { sendKeys([(0x7D, [])],                             label: "Nav Down") }
 
     private func sendKeys(_ strokes: [Stroke], label: String) {
         guard let claude = runningClaude() else {
@@ -215,7 +232,6 @@ final class ClaudeMainBar: NSObject, NSTouchBarDelegate {
         let was = claudeIsFront
         claudeIsFront = (app.bundleIdentifier == Self.claudeBundle)
         if claudeIsFront != was {
-            dialogMessage = claudeIsFront ? "Claude wants your permission" : nil
             applyButtonState()
             tsDebugLog("claude-bar: front=\(app.localizedName ?? "?") → buttons \(claudeIsFront ? "active" : "dim")\n")
         }
@@ -234,7 +250,7 @@ final class ClaudeMainBar: NSObject, NSTouchBarDelegate {
     private func startRefreshTimer() {
         refreshTimer?.invalidate()
         refreshTimer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { [weak self] _ in
-            guard let self, self.dialogMessage == nil else { return }
+            guard let self else { return }
             DispatchQueue.main.async { self.infoLabel?.stringValue = self.infoText() }
         }
     }
