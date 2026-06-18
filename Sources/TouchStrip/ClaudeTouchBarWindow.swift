@@ -60,13 +60,26 @@ final class ClaudeMainBar: NSObject, NSTouchBarDelegate {
            let sym = dlsym(handle, "DFRSystemModalShowsCloseBoxWhenFrontMost") {
             unsafeBitCast(sym, to: DFRShowsCloseBoxFn.self)(false)
         }
-        let sel = NSSelectorFromString("presentSystemModalTouchBar:systemTrayItemIdentifier:")
-        if NSTouchBar.responds(to: sel) {
-            NSTouchBar.perform(sel, with: bar, with: nil)
-            tsDebugLog("ClaudeMainBar: presentSystemModalTouchBar succeeded\n")
-        } else {
-            tsDebugLog("ClaudeMainBar: no presentation API found\n")
+        // Presents a persistent strip in the MIDDLE of the Touch Bar via the PRIVATE
+        // DFRFoundation API — the same mechanism Claude Desktop / BetterTouchTool use.
+        // No public equivalent exists (NSTouchBar.principalItemIdentifier only centers
+        // within a frontmost-app bar). Relying on a private framework makes the app
+        // Mac App Store-ineligible — direct/notarized distribution only.
+        //
+        // macOS 13+ exposes this as presentSystemModalTouchBar:; older systems named the
+        // same selector presentSystemModalFunctionBar:. Try the modern name, then fall
+        // back. Both are guarded by responds(to:) so the app degrades gracefully if Apple
+        // ever renames or removes the symbol.
+        for name in ["presentSystemModalTouchBar:systemTrayItemIdentifier:",
+                     "presentSystemModalFunctionBar:systemTrayItemIdentifier:"] {
+            let sel = NSSelectorFromString(name)
+            if NSTouchBar.responds(to: sel) {
+                NSTouchBar.perform(sel, with: bar, with: nil)
+                tsDebugLog("ClaudeMainBar: \(name) succeeded\n")
+                return
+            }
         }
+        tsDebugLog("ClaudeMainBar: no presentation API found\n")
     }
 
     // MARK: - NSTouchBarDelegate

@@ -100,7 +100,7 @@ Claude Desktop is an Electron app, and its tool-permission dialog is an in-WebVi
 - **Global HID events, not per-PID.** Events are posted to `.cghidEventTap` (the global HID pipeline) rather than `postToPid`, because Electron's renderer owns the focused dialog and only sees events that come through the normal input path.
 - **Front-app heuristic for enablement.** Since the dialog is unobservable, buttons simply enable whenever Claude Desktop is the frontmost app.
 
-The Touch Bar itself is presented via the private `DFRFoundation` framework's `presentSystemModalTouchBar:` — the same mechanism Claude Desktop and other apps use to put a persistent strip in the middle of the bar.
+The Touch Bar itself is presented via the private `DFRFoundation` framework's `presentSystemModalTouchBar:systemTrayItemIdentifier:` (with `DFRSystemModalShowsCloseBoxWhenFrontMost(false)` to hide the ✕) — the same mechanism Claude Desktop and BetterTouchTool use to keep a strip in the middle of the bar *across app switches*. There is **no public equivalent**: `NSTouchBar.principalItemIdentifier` only centers an item within a frontmost-app bar. Prior art that reverse-engineered these symbols: [a2/touch-baer](https://github.com/a2/touch-baer), [MTMR](https://github.com/Toxblh/MTMR), and [mrmekon/touchtest](https://github.com/mrmekon/touchtest).
 
 ---
 
@@ -109,6 +109,7 @@ The Touch Bar itself is presented via the private `DFRFoundation` framework's `p
 - **Token counter** reads `~/Library/Application Support/Claude/buddy-tokens.json`, which is **not** a standard Claude Desktop file — it comes from a separate setup. Without it, the info slot just shows `—`. Treat this feature as setup-specific.
 - **Fragile by nature.** The permission buttons depend on Claude Desktop's current dialog markup and Tab order. A Claude Desktop update could change that and require re-tuning the `Tab` counts in `ClaudeTouchBarWindow.swift`. ⚠️ Test on a low-stakes prompt after any Claude update — a wrong Tab count could make a button hit the wrong action.
 - **Fan button** is specific to Macs Fan Control and to preset IDs verified on one machine; adjust for your own presets.
+- **Not Mac App Store-eligible.** Linking the private `DFRFoundation` framework trips App Store private-symbol checks, so distribute directly (Developer-ID-signed + notarized). _Note: notarization of a `DFRFoundation`-using build hasn't yet been verified with `notarytool` — confirm before publishing a download._
 
 ---
 
