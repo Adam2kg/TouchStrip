@@ -136,4 +136,4 @@ Sources/TouchStrip/
 
 ## License
 
-No license yet — add one before reuse. (MIT is a reasonable default for a hack like this.)
+[MIT](LICENSE) © 2026 Adam2kg.
