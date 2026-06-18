@@ -7,3 +7,8 @@ TouchStrip.app/
 *.xcuserstate
 xcuserdata/
 DerivedData/
+.claude-octopus/
+.octo/
+.octo-continue.md
+.claude/
+.errwatch/
